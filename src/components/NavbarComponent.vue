@@ -7,9 +7,7 @@ export default {
 
     };
   },
-  props:{
-    user: Object
-  },
+
   components: {
     RouterLink,
   },
