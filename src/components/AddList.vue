@@ -8,6 +8,9 @@ export default {
         title: "",
         tag: false,
         reminder: false,
+        settings:{
+          color: "#80CED1"
+        }
       },
       todos: [],
       todo: "",
@@ -47,6 +50,10 @@ export default {
             v-model="list.reminder"
             class="text-success border-b border-success"
           />
+        </label>
+        <label class="text-2xl text-primary">
+          COLOR:
+          <input class="w-10 h-10 " type="color" v-model="list.settings.color">
         </label>
         <label class="text-2xl text-primary">
           TAG:
