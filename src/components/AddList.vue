@@ -1,4 +1,5 @@
 <script>
+import { v4 as uuidv4 } from "uuid";
 export default {
   name: "AddList",
   data() {
@@ -9,7 +10,17 @@ export default {
         reminder: false,
       },
       todos: [],
+      todo: "",
     };
+  },
+  methods: {
+    addTodo() {
+      this.todos.push({
+        id: uuidv4(),
+        content: this.todo,
+      });
+      this.todo = "";
+    },
   },
 };
 </script>
@@ -47,10 +58,21 @@ export default {
           </select>
         </label>
         <div class="flex flex-col justify-center items-center">
-          <h3>TODOS</h3>
-          <label>
-            <button class="btn btn-primary btn-sm">ADD</button>
-            <input type="text" class="text-success border-b border-success px-2"/>
+          <label class="mb-6">
+            <button
+              v-if="todo.length > 0"
+              @click="addTodo"
+              class="btn btn-primary btn-sm"
+            >
+              ADD
+            </button>
+            <input
+              type="text"
+              @keyup.enter="addTodo"
+              v-model="todo"
+              placeholder="Write your todo here"
+              class="text-success border-b border-success px-2"
+            />
           </label>
 
           <ul
