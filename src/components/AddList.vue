@@ -31,7 +31,7 @@ export default {
 <template>
   <div class="drawer drawer-mobile">
     <input id="add-list-drawer" type="checkbox" class="drawer-toggle" />
-    <div class="drawer-side w-full">
+    <div class="drawer-side w-full text-center">
       <label for="add-list-drawer" class="drawer-overlay"></label>
       <div class="m-4 p-4 flex flex-col justify-around items-center">
         <label class="text-2xl text-primary">
@@ -57,7 +57,10 @@ export default {
         </label>
         <label class="text-2xl text-primary">
           TAG:
-          <select v-model="list.tag" class="select select-success w-full max-w-xs select-lg">
+          <select
+            v-model="list.tag"
+            class="select select-success w-full max-w-xs select-lg"
+          >
             <option value="false">PICK A TAG</option>
             <option value="home">HOME</option>
             <option value="school">SCHOOL</option>
@@ -81,16 +84,22 @@ export default {
               class="text-success border-b border-success px-2"
             />
           </label>
+          <div v-if="todos.length > 0">
+            <h3 class="text-success">TODOS</h3>
+            <ul
+              tabindex="0"
+              class="text-center dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52"
 
-          <ul
-            tabindex="0"
-            class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52"
-            v-if="todos.length > 0"
-          >
-            <li v-for="todo in todos" :key="todo.id">
-              {{todo.content}}
-            </li>
-          </ul>
+            >
+              <li
+                class="text-xl border-b border-success p-4 rounded-none text-success"
+                v-for="todo in todos"
+                :key="todo.id"
+              >
+                {{ todo.content }}
+              </li>
+            </ul>
+          </div>
         </div>
         <button v-if="list.title" class="btn btn-success">SAVE</button>
       </div>
