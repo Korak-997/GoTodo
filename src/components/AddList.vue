@@ -17,8 +17,7 @@ export default {
 <template>
   <div class="drawer drawer-mobile">
     <input id="add-list-drawer" type="checkbox" class="drawer-toggle" />
-    <div class="drawer-content flex flex-col items-center justify-center"></div>
-    <div class="drawer-side w-1/2">
+    <div class="drawer-side w-full">
       <label for="add-list-drawer" class="drawer-overlay"></label>
       <div class="m-4 p-4 flex flex-col justify-around items-center">
         <label class="text-2xl text-primary">
