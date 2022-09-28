@@ -1,5 +1,6 @@
 <script>
 import { v4 as uuidv4 } from "uuid";
+import { addList } from "../helpers/db";
 export default {
   name: "AddList",
   data() {
@@ -8,17 +9,45 @@ export default {
         title: "",
         tag: false,
         reminder: false,
-        settings:{
-          color: "#80CED1"
-        }
+        settings: {
+          color: "",
+        },
+        todos: [],
       },
-      todos: [],
       todo: "",
     };
   },
+  props: {
+    openDrawer: Boolean,
+  },
   methods: {
+    resetList() {
+      this.list = {
+        title: "",
+        tag: false,
+        reminder: false,
+        settings: {
+          color: "#80CED1",
+        },
+      };
+    },
+    async saveList() {
+      this.$emit('showLoading', "Saving new List please wait...")
+      const listToSave = {}
+
+      for(const key in this.list){
+        if(this.list[key].length > 0 || this.list[key]) listToSave[key] = this.list[key]
+      }
+      const response = await addList(listToSave);
+      if(response.status){
+        this.$emit('stopLoading')
+        this.$emit('showAlert', {status:true})
+      }else{
+        this.$emit('showAlert', {status: false, msg: JSON.stringify(response.msg)})
+      }
+    },
     addTodo() {
-      this.todos.push({
+      this.list.todos.push({
         id: uuidv4(),
         content: this.todo,
       });
@@ -30,7 +59,7 @@ export default {
 
 <template>
   <div class="drawer drawer-mobile">
-    <input id="add-list-drawer" type="checkbox" class="drawer-toggle" />
+    <input id="add-list-drawer" type="checkbox" class="drawer-toggle" :checked="openDrawer"/>
     <div class="drawer-side w-full text-center">
       <label for="add-list-drawer" class="drawer-overlay"></label>
       <div class="m-4 p-4 flex flex-col justify-around items-center">
@@ -53,7 +82,7 @@ export default {
         </label>
         <label class="text-2xl text-primary">
           COLOR:
-          <input class="w-10 h-10 " type="color" v-model="list.settings.color">
+          <input class="w-10 h-10" type="color" v-model="list.settings.color" />
         </label>
         <label class="text-2xl text-primary">
           TAG:
@@ -84,24 +113,23 @@ export default {
               class="text-success border-b border-success px-2"
             />
           </label>
-          <div v-if="todos.length > 0">
+          <div v-if="list.todos.length > 0">
             <h3 class="text-success">TODOS</h3>
-            <ul
-              tabindex="0"
-              class="text-center dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52"
-
-            >
+            <div class="bg-base-100 flex justify-around items-center flex-wrap">
               <li
-                class="text-xl border-b border-success p-4 rounded-none text-success"
-                v-for="todo in todos"
+                class="text-xl m-2  border-b border-success p-4 rounded-none text-success"
+                v-for="todo in list.todos"
                 :key="todo.id"
               >
                 {{ todo.content }}
               </li>
-            </ul>
+
+            </div>
           </div>
         </div>
-        <button v-if="list.title" class="btn btn-success">SAVE</button>
+        <button @click="saveList" v-if="list.title" class="btn btn-success">
+          SAVE
+        </button>
       </div>
     </div>
   </div>
