@@ -27,7 +27,7 @@ const allLists = async () => {
   let { data: lists, error } = await supabase.from("lists").select("*");
   return error || lists == null
     ? { status: false, msg: error }
-    : { status: true, data };
+    : { status: true, data: lists };
 };
 
 const addList = async (list) => {
