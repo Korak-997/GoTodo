@@ -1,6 +1,8 @@
 <script>
 import { v4 as uuidv4 } from "uuid";
 import { addList } from "../helpers/db";
+import CloseBtn from "./CloseBtn.vue";
+
 export default {
   name: "AddList",
   data() {
@@ -17,8 +19,11 @@ export default {
       todo: "",
     };
   },
+  components: {
+    CloseBtn,
+  },
   props: {
-    openDrawer: Boolean,
+    show: Boolean,
   },
   methods: {
     resetList() {
@@ -32,18 +37,22 @@ export default {
       };
     },
     async saveList() {
-      this.$emit('showLoading', "Saving new List please wait...")
-      const listToSave = {}
+      this.$emit("showLoading", "Saving new List please wait...");
+      const listToSave = {};
 
-      for(const key in this.list){
-        if(this.list[key].length > 0 || this.list[key]) listToSave[key] = this.list[key]
+      for (const key in this.list) {
+        if (this.list[key].length > 0 || this.list[key])
+          listToSave[key] = this.list[key];
       }
       const response = await addList(listToSave);
-      if(response.status){
-        this.$emit('stopLoading')
-        this.$emit('showAlert', {status:true})
-      }else{
-        this.$emit('showAlert', {status: false, msg: JSON.stringify(response.msg)})
+      if (response.status) {
+        this.$emit("stopLoading");
+        this.$emit("showAlert", { status: true });
+      } else {
+        this.$emit("showAlert", {
+          status: false,
+          msg: JSON.stringify(response.msg),
+        });
       }
     },
     addTodo() {
@@ -58,12 +67,11 @@ export default {
 </script>
 
 <template>
-  <div class="drawer drawer-mobile">
-    <input id="add-list-drawer" type="checkbox" class="drawer-toggle" :checked="openDrawer"/>
-    <div class="drawer-side w-full text-center">
-      <label for="add-list-drawer" class="drawer-overlay"></label>
-      <div class="m-4 p-4 flex flex-col justify-around items-center">
-        <label class="text-2xl text-primary">
+  <div class="modal text-center" :class="{ 'modal-open': show }">
+    <div class="modal-box">
+      <close-btn @close="() => $emit('close')"></close-btn>
+      <div class="card w-fullf bg-base-100 my-3  flex flex-col justify-around items-center">
+        <label class="text-2xl text-primary m-4">
           TITLE:
           <input
             type="text"
@@ -72,7 +80,7 @@ export default {
             class="text-success border-b border-success"
           />
         </label>
-        <label class="text-2xl text-primary">
+        <label class="text-2xl text-primary m-4">
           REMINDER:
           <input
             type="datetime-local"
@@ -80,11 +88,11 @@ export default {
             class="text-success border-b border-success"
           />
         </label>
-        <label class="text-2xl text-primary">
+        <label class="text-2xl text-primary m-4">
           COLOR:
           <input class="w-10 h-10" type="color" v-model="list.settings.color" />
         </label>
-        <label class="text-2xl text-primary">
+        <label class="text-2xl text-primary m-4">
           TAG:
           <select
             v-model="list.tag"
@@ -96,7 +104,7 @@ export default {
             <option value="work">WORK</option>
           </select>
         </label>
-        <div class="flex flex-col justify-center items-center">
+        <div class="flex flex-col justify-center items-center m-4">
           <label class="mb-6">
             <button
               v-if="todo.length > 0"
@@ -113,21 +121,20 @@ export default {
               class="text-success border-b border-success px-2"
             />
           </label>
-          <div v-if="list.todos.length > 0">
-            <h3 class="text-success">TODOS</h3>
-            <div class="bg-base-100 flex justify-around items-center flex-wrap">
-              <li
-                class="text-xl m-2  border-b border-success p-4 rounded-none text-success"
-                v-for="todo in list.todos"
-                :key="todo.id"
-              >
-                {{ todo.content }}
-              </li>
-
-            </div>
+        </div>
+        <div v-if="list.todos.length > 0">
+          <h3 class="text-success">TODOS</h3>
+          <div class="bg-base-100 flex justify-around items-center flex-wrap">
+            <li
+              class="text-xl m-2 border-b border-success p-4 rounded-none text-success"
+              v-for="todo in list.todos"
+              :key="todo.id"
+            >
+              {{ todo.content }}
+            </li>
           </div>
         </div>
-        <button @click="saveList" v-if="list.title" class="btn btn-success">
+        <button @click="saveList" v-if="list.title" class="btn btn-success w-full m-4">
           SAVE
         </button>
       </div>

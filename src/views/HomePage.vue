@@ -3,6 +3,8 @@ import SpinnerModal from "../components/SpinnerModal.vue";
 import AddList from "../components/AddList.vue";
 import LoadingModal from "../components/LoadingModal.vue";
 import FlashMsg from "../components/FlashMsg.vue";
+import ListBox from "../components/ListBox.vue";
+
 import { goToTop } from "../helpers/methods";
 import { allLists } from "../helpers/db";
 export default {
@@ -14,7 +16,7 @@ export default {
       flashType: "alert-success",
       flashMsg: "",
       showFlash: false,
-      openDrawer: false,
+      showAddList: false,
       datas: false,
     };
   },
@@ -23,6 +25,7 @@ export default {
     AddList,
     LoadingModal,
     FlashMsg,
+    ListBox
   },
   methods: {
     handleLoading(msg = false) {
@@ -71,50 +74,25 @@ export default {
     <flash-msg v-if="showFlash" :text="flashMsg" :type="flashType"></flash-msg>
     <loading-modal :show="showLoading" :text="loadingText"></loading-modal>
     <spinner-modal :show="showSpinner"></spinner-modal>
-    <label for="add-list-drawer" class="btn btn-primary drawer-button lg:hidden"
-      >ADD LIST</label
-    >
+    <button @click="()=>showAddList = true" class="btn btn-accent">ADD LIST</button>
     <add-list
-      :open-drawer="openDrawer"
+      :show="showAddList"
+      @close="() => (showAddList = false)"
       @showAlert="(e) => handleAlert(e)"
       @showLoading="(e) => handleLoading(e)"
       @stopLoading="handleLoading"
     ></add-list>
     <div
       v-if="datas"
-      class="shadow-2xl flex flex-row flex-wrap justify-around items-start text-center"
+      class="flex flex-row flex-wrap justify-around items-start text-center"
     >
       <div
         v-for="list in datas"
         :key="list.id"
-        class="list card card-compact w-50 bg-base-100 shadow-xl"
+        class="list card card-compact w-50 bg-base-100 shadow-6xl m-6 p-4"
         :style="{ backgroundColor: list.settings.color }"
       >
-        <h3 class="text-xl">{{ list.title }}</h3>
-        <div v-if="list.tag" class="badge badge-secondary">
-          {{ list.tag.toUpperCase() }}
-        </div>
-        <div class="card-body">
-          <div
-            v-if="list.todos"
-            class="flex justify-around items-center flex-col"
-          >
-            <li
-              v-for="todo in list.todos"
-              class="bt-secondary text-xl"
-              :key="todo.id"
-            >
-              {{ todo.content }}
-            </li>
-          </div>
-
-          <div class="card-actions justify-middle">
-            <div class="btn-group">
-              <button class="btn btn-info btn-sm">EDIT</button>
-              <button class="btn btn-error btn-sm">DELETE</button>
-            </div>
-          </div>
-        </div>
+        <list-box :list="list"></list-box>
       </div>
     </div>
   </main>
