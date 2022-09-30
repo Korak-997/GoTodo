@@ -25,7 +25,7 @@ export default {
     <div class="card-actions justify-middle">
       <div class="btn-group">
         <button class="btn btn-info btn-sm">EDIT</button>
-        <button class="btn btn-error btn-sm">DELETE</button>
+        <button @click="() => $emit('delete')" class="btn btn-error btn-sm">DELETE</button>
       </div>
     </div>
   </div>
