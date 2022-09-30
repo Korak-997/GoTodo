@@ -32,7 +32,7 @@ export default {
         tag: false,
         reminder: false,
         settings: {
-          color: "#80CED1",
+          color: "",
         },
       };
     },

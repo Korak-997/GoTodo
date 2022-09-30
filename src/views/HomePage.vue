@@ -5,6 +5,7 @@ import LoadingModal from "../components/LoadingModal.vue";
 import FlashMsg from "../components/FlashMsg.vue";
 import ListBox from "../components/ListBox.vue";
 import AlertMsg from "../components/AlertMsg.vue";
+import EditList from "../components/EditList.vue"
 import { goToTop } from "../helpers/methods";
 import { allLists, deleteList } from "../helpers/db";
 export default {
@@ -20,6 +21,8 @@ export default {
       datas: false,
       showAlert: false,
       alertText: "",
+      listTodEdit: "",
+      showEditList:false
     };
   },
   components: {
@@ -29,6 +32,7 @@ export default {
     FlashMsg,
     ListBox,
     AlertMsg,
+    EditList
   },
   methods: {
     async remove() {
@@ -51,7 +55,6 @@ export default {
       this.showAlert = true;
     },
     handleLoading(msg = false) {
-      this.openDrawer = !this.openDrawer;
       if (msg && msg.length > 0) {
         this.loadingText = msg;
         this.showLoading = true;
@@ -59,6 +62,11 @@ export default {
         this.showLoading = false;
       }
       goToTop();
+    },
+    editList(id){
+      this.listTodEdit = this.datas.find((list)=> list.id === id)
+      this.showEditList = true
+      console.log(this.listTodEdit)
     },
     handleFlash(event) {
       if (event.status) {
@@ -76,7 +84,7 @@ export default {
       const res = await allLists();
       if (!res.status) {
         this.flashType = "alert-error";
-        this.flashMsg = `There was a problem 😭\nERROR MESSAGE IS 👇\n${event.msg}`;
+        this.flashMsg = `There was a problem 😭\nERROR MESSAGE IS 👇\n${res.msg}`;
         this.showFlash = true;
         this.showSpinner = false;
         setTimeout(() => (this.showFlash = false), 4000);
@@ -99,7 +107,7 @@ export default {
       @showAlert="(e) => handleFlash(e)"
       @showLoading="(e) => handleLoading(e)"
       @stopLoading="handleLoading"
-      :list="listTodEdit"
+      :listToEdit="listTodEdit"
     ></edit-list>
     <alert-msg
       @deny="() => (showAlert = false)"
@@ -130,7 +138,7 @@ export default {
         class="list card card-compact w-50 bg-base-100 shadow-6xl m-6 p-4"
         :style="{ backgroundColor: list.settings.color }"
       >
-        <list-box @delete="() => removeList(list)" :list="list"></list-box>
+        <list-box @delete="() => removeList(list)" :list="list" @edit="()=> editList(list.id)"></list-box>
       </div>
     </div>
   </main>

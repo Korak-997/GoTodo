@@ -1,6 +1,6 @@
 <script>
 import { v4 as uuidv4 } from "uuid";
-import { addList } from "../helpers/db";
+import { updateList } from "../helpers/db";
 import CloseBtn from "./CloseBtn.vue";
 
 export default {
@@ -8,11 +8,14 @@ export default {
   data() {
     return {
       list: {
-        title: list.title,
-        tag: list.tag,
-        reminder: list.reminder,
-        settings: list.settings,
-        todos: list.todos,
+        id: "",
+        title: "",
+        tag: false,
+        reminder: false,
+        settings: {
+          color: "",
+        },
+        todos: [],
       },
       todo: "",
     };
@@ -20,9 +23,23 @@ export default {
   components: {
     CloseBtn,
   },
+  watch: {
+    show(newStatus, oldStatus) {
+      if (newStatus !== oldStatus) {
+        this.list.id = this.listToEdit.id;
+        this.list.title = this.listToEdit.title || "";
+        this.list.tag = this.listToEdit.tag || false;
+        this.list.reminder = this.listToEdit.reminder || false;
+        this.list.settings = {
+          color: this.listToEdit.settings.color || "",
+        };
+        this.list.todos = this.listToEdit.todos || [];
+      }
+    },
+  },
   props: {
     show: Boolean,
-    list: Object
+    listToEdit: Object,
   },
   methods: {
     resetList() {
@@ -31,7 +48,7 @@ export default {
         tag: false,
         reminder: false,
         settings: {
-          color: "#80CED1",
+          color: "",
         },
       };
     },
@@ -43,7 +60,7 @@ export default {
         if (this.list[key].length > 0 || this.list[key])
           listToSave[key] = this.list[key];
       }
-      const response = await addList(listToSave);
+      const response = await updateList(this.list.id, listToSave);
       if (response.status) {
         this.$emit("stopLoading");
         this.$emit("showAlert", { status: true });
@@ -54,8 +71,8 @@ export default {
         });
       }
     },
-    deleteTodo(id){
-      this.list.todos = this.list.todos.filter((todo)=> todo.id !== id)
+    deleteTodo(id) {
+      this.list.todos = this.list.todos.filter((todo) => todo.id !== id);
     },
     addTodo() {
       this.list.todos.push({
@@ -72,7 +89,17 @@ export default {
   <div class="modal text-center" :class="{ 'modal-open': show }">
     <div class="modal-box">
       <close-btn @close="() => $emit('close')"></close-btn>
-      <div class="card w-fullf bg-base-100 my-3  flex flex-col justify-around items-center">
+      <div
+        class="
+          card
+          w-fullf
+          bg-base-100
+          my-3
+          flex flex-col
+          justify-around
+          items-center
+        "
+      >
         <label class="text-2xl text-primary m-4">
           TITLE:
           <input
@@ -128,18 +155,34 @@ export default {
           <h3 class="text-success">TODOS</h3>
           <div class="bg-base-100 flex justify-around items-center flex-wrap">
             <li
-              class="text-xl m-2 border-b border-success p-4 rounded-none text-success"
+              class="
+                text-xl
+                m-2
+                border-b border-success
+                p-4
+                rounded-none
+                text-success
+              "
               v-for="todo in list.todos"
               :key="todo.id"
             >
               <p>
                 {{ todo.content }}
               </p>
-              <button @click="()=>deleteTodo(todo.id)" class="btn btn-error btn-sm">DEL</button>
+              <button
+                @click="() => deleteTodo(todo.id)"
+                class="btn btn-error btn-sm"
+              >
+                DEL
+              </button>
             </li>
           </div>
         </div>
-        <button @click="saveList" v-if="list.title" class="btn btn-success w-full m-4">
+        <button
+          @click="saveList"
+          v-if="list.title"
+          class="btn btn-success w-full m-4"
+        >
           SAVE
         </button>
       </div>

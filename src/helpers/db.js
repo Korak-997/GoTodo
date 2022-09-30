@@ -9,6 +9,7 @@ export {
   deleteList,
   allLists,
   getList,
+  updateList
 };
 
 //* List operations
