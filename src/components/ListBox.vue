@@ -1,8 +1,13 @@
 <script>
+import EditList from "./EditList.vue"
+
 export default {
   name: "ListBox",
   props:{
     list:Object
+  },
+  components:{
+    EditList
   }
 };
 </script>
@@ -24,7 +29,7 @@ export default {
 
     <div class="card-actions justify-middle">
       <div class="btn-group">
-        <button class="btn btn-info btn-sm">EDIT</button>
+        <button @click="() => $emit('edit')" class="btn btn-info btn-sm">EDIT</button>
         <button @click="() => $emit('delete')" class="btn btn-error btn-sm">DELETE</button>
       </div>
     </div>

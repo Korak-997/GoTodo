@@ -19,7 +19,7 @@ export default {
       showAddList: false,
       datas: false,
       showAlert: false,
-      alertText: ""
+      alertText: "",
     };
   },
   components: {
@@ -93,6 +93,14 @@ export default {
 </script>
 <template>
   <main class="my-6 flex justify-center items-center flex-col">
+    <edit-list
+      :show="showEditList"
+      @close="() => (showEditList = false)"
+      @showAlert="(e) => handleFlash(e)"
+      @showLoading="(e) => handleLoading(e)"
+      @stopLoading="handleLoading"
+      :list="listTodEdit"
+    ></edit-list>
     <alert-msg
       @deny="() => (showAlert = false)"
       @accept="remove"
@@ -102,7 +110,9 @@ export default {
     <flash-msg v-if="showFlash" :text="flashMsg" :type="flashType"></flash-msg>
     <loading-modal :show="showLoading" :text="loadingText"></loading-modal>
     <spinner-modal :show="showSpinner"></spinner-modal>
-    <button @click="()=>showAddList = true" class="btn btn-accent">ADD LIST</button>
+    <button @click="() => (showAddList = true)" class="btn btn-accent">
+      ADD LIST
+    </button>
     <add-list
       :show="showAddList"
       @close="() => (showAddList = false)"
@@ -120,7 +130,7 @@ export default {
         class="list card card-compact w-50 bg-base-100 shadow-6xl m-6 p-4"
         :style="{ backgroundColor: list.settings.color }"
       >
-        <list-box @delete="()=>removeList(list)" :list="list"></list-box>
+        <list-box @delete="() => removeList(list)" :list="list"></list-box>
       </div>
     </div>
   </main>
